@@ -1,0 +1,1 @@
+exports.wordList = ['pies', 'rustic', 'clam', 'cushion']
