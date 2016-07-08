@@ -1,46 +1,68 @@
 var inquirer = require('inquirer');
-var words = require('./game.js');
-
-
-var currentWord = words.wordList[Math.floor(Math.random()*words.wordList.length)];
-var blankCurrentWord = "";
-
-for(var i = 0; i < currentWord.length; i++) {
-	blankCurrentWord += '_';
-}
-
-console.log(currentWord);
-console.log(blankCurrentWord);
-
-
+var words = require('./word.js');
 var letterCheck = require('./letter.js');
-var letterObj = letterCheck.letter.letterFunctions;	//Holds the functions from the constructor in the letter.js
 
-console.log(letterObj.checkIfLetter('_'));
+
+var wordObj = words.word.wordFunctions;					//Holds the word list
+var letterObj = letterCheck.letter.letterFunctions;		//Holds the functions from the constructor in letter.js
+
+var currentWord, blankCurrentWord, turns, lettersTried;
+
+
+function varSet() {
+	currentWord = wordObj.wordList[Math.floor(Math.random()*wordObj.wordList.length)];
+	blankCurrentWord = "";
+
+	for(var i = 0; i < currentWord.length; i++) {
+		blankCurrentWord += '_ ';
+	}
+
+	lettersTried = [];
+	turns = 10;
+}
 
 
 function userGuess() {
+	console.log(blankCurrentWord);
+
 	inquirer.prompt([
 		{
 			type: "input",
-			message: "Guess A Letter: ",
+			message: "Guess A Letter:",
 			name: "letter"
 		},
 	]).then(function (user) {
+		var userGuessLetter = user.letter.toLowerCase();
+		var isLetter = letterObj.checkIfLetter(userGuessLetter);
 		var inWord = false;
-		var isLetter = letterObj.checkIfLetter(user.letter);
 
 		if(isLetter) {
 			for(var i = 0; i < currentWord.length; i++) {
-				if(user.letter == currentWord[i]) {
-					console.log("that letter is in the word");
+				if(userGuessLetter == currentWord[i]) {
+					blankCurrentWord = letterObj.replaceLetter(blankCurrentWord, i * 2, userGuessLetter);
 					inWord = true;
 				}
 			}
 
-			if(inWord) {
-				console.log("then you do this");
-			}	
+			if(!inWord && !letterObj.inArray(userGuessLetter, lettersTried)) {
+				lettersTried.push(userGuessLetter);
+				turns--;
+			}
+
+			console.log("You have " + turns + " turns left");
+			console.log("You have guessed: " + lettersTried);
+			console.log("");
+
+			if(blankCurrentWord.indexOf("_") === -1) {
+				console.log("You won!");
+				playAgain();
+			} else if(turns == 0){
+				console.log("You ran out of turns!");
+				console.log("The word was " + currentWord);
+				playAgain();
+			} else {
+				userGuess();
+			}
 		} else {
 			console.log("That was not a letter. Please enter a letter A-Z.");
 			userGuess();
@@ -49,4 +71,23 @@ function userGuess() {
 	});
 }
 
+function playAgain() {
+	inquirer.prompt([
+	{
+		type: "confirm",
+		message: "Do you want to play again?",
+		name: "again"
+	},
+	]).then(function (user) {
+		if(user.again) {
+			varSet();
+			userGuess();
+		} else {
+			console.log("Good Bye!");
+		}
+	});
+}
+
+
+varSet();
 userGuess();
