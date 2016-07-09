@@ -4,6 +4,6 @@ Hangman using Node.js
 
 ### To utilize this app
 
+- npm install
 - node main.js
-	-  npm install
 	-  Follow the prompts and enjoy!
