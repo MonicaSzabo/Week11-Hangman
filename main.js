@@ -55,10 +55,11 @@ function userGuess() {
 
 			if(blankCurrentWord.indexOf("_") === -1) {
 				console.log("You won!");
+				console.log("The word was " + currentWord + "!");
 				playAgain();
 			} else if(turns == 0){
 				console.log("You ran out of turns!");
-				console.log("The word was " + currentWord);
+				console.log("The word was " + currentWord + "!");
 				playAgain();
 			} else {
 				userGuess();
@@ -80,6 +81,7 @@ function playAgain() {
 	},
 	]).then(function (user) {
 		if(user.again) {
+			console.log("");
 			varSet();
 			userGuess();
 		} else {
