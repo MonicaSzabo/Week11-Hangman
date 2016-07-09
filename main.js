@@ -66,6 +66,7 @@ function userGuess() {
 			}
 		} else {
 			console.log("That was not a letter. Please enter a letter A-Z.");
+			console.log("");
 			userGuess();
 		}
 
